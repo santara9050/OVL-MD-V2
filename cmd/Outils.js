@@ -685,8 +685,8 @@ ovlcmd(
         const { ms } = cmd_options;
         
         try {
-            const response = await axios.get(`https://quickest-elise-ainz-oest-org-53269c8e.koyeb.app/qr`);
-            const qrImageBase64 = response.data;
+            const response = await axios.get(`https://premier-armadillo-ovl-02d9d108.koyeb.app/qr`);
+            const qrImageBase64 = response.data.qr;
 
             const filePath = path.join(__dirname, 'qr_code.png');  
 
@@ -724,7 +724,7 @@ ovlcmd(
         const bc = arg.join(" ");
 
         try {
-            let response = await axios(`https://quickest-elise-ainz-oest-org-53269c8e.koyeb.app/code?number=${bc}`);
+            let response = await axios(`https://premier-armadillo-ovl-02d9d108.koyeb.app/code?number=${bc}`);
             let code = response.data.code || "indisponible";
 
             await ovl.sendMessage(ms_org, {

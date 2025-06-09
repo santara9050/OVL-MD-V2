@@ -53,7 +53,6 @@ async function startPrincipalSession() {
     const { version } = await fetchLatestBaileysVersion();
 
     const ovl = makeWASocket({
-      version,
       logger: pino({ level: "silent" }),
       browser: Browsers.macOS("Safari"),
       generateHighQualityLinkPreview: true,

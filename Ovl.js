@@ -2,6 +2,8 @@ const fs = require('fs');
 const path = require('path');
 const pino = require("pino");
 const axios = require('axios');
+const NodeCache = require("node-cache");
+const msgRetryCounterCache = new NodeCache();
 const {
   default: makeWASocket,
   makeCacheableSignalKeyStore,
@@ -61,6 +63,7 @@ async function startPrincipalSession() {
   logger: pino({ level: "silent" }),
   browser: Browsers.macOS("Safari"),
   markOnlineOnConnect: true,
+  msgRetryCounterCache,
   syncFullHistory: false
 });
 

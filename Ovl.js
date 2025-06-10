@@ -64,7 +64,7 @@ async function startPrincipalSession() {
   browser: Browsers.macOS("Safari"),
   markOnlineOnConnect: true,
   msgRetryCounterCache,
-  syncFullHistory: true
+  syncFullHistory: false
 });
 
     ovl.ev.on("messages.upsert", async (m) => message_upsert(m, ovl));

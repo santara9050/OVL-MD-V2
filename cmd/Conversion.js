@@ -370,10 +370,9 @@ ovlcmd(
 
     try {
       const stickerBuffer = await ovl.dl_save_media_ms(msg_Repondu.stickerMessage);
-
       const imageBuffer = await sharp(stickerBuffer).webp().toBuffer();
 
-      const fileName = `${Math.floor(Math.random() * 10000)}.png`;
+      const fileName = path.join(os.tmpdir(), `${Date.now()}_${Math.floor(Math.random() * 10000)}.png`);
       await sharp(imageBuffer).toFile(fileName);
 
       await ovl.sendMessage(

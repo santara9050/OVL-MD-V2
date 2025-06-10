@@ -183,8 +183,11 @@ ovlcmd(
     desc: "Réponds à une question d’anime avec 15 secondes pour choisir la bonne option.",
     alias: ["a-quizz"]
   },
-  async (ms_org, ovl, { repondre, auteur_Message }) => {
+  async (ms_org, ovl, { repondre, verif_Groupe }) => {
     let questions;
+      if (!verif_Groupe) {
+                return repondre("Cette commande ne fonctionne que dans les groupes");
+      }
     try {
       const res = await axios.get("https://raw.githubusercontent.com/Ainz-devs/OVL-THEME/main/quizz_anime.json");
       questions = res.data;
@@ -205,37 +208,53 @@ ovlcmd(
 │
 ${optionList.split("\n").map(l => `│ ${l}`).join("\n")}
 │
-╰⌛️ *Tu as 15 secondes pour répondre avec un chiffre entre 1 et 4.*`;
+╰⌛️ *Le premier à répondre avec un chiffre entre 1 et 4 gagne !*`;
 
     await ovl.sendMessage(ms_org, { text: message });
 
-    try {
-      const reponse = await ovl.recup_msg({
-        auteur: auteur_Message,
-        ms_org,
-        temps: 15000
-      });
+    const numbersToLetters = { "1": "a", "2": "b", "3": "c", "4": "d" };
+    const correctAnswerLetter = answer.toLowerCase();
+    const correctAnswerText = options[correctAnswerLetter];
 
-      let userReply = reponse?.message?.conversation || reponse?.message?.extendedTextMessage?.text || "";
-      userReply = userReply.trim();
+    const debut = Date.now();
+    while (Date.now() - debut < 15000) {
+      try {
+        const reponse = await ovl.recup_msg({ ms_org, temps: 15000 - (Date.now() - debut) });
 
-      if (!["1", "2", "3", "4"].includes(userReply)) {
-        return repondre("Tu dois répondre avec un chiffre entre *1* et *4*.");
+        const userReply = (
+          reponse?.message?.conversation ||
+          reponse?.message?.extendedTextMessage?.text ||
+          ""
+        ).trim();
+
+        const jid = reponse.key.participant || reponse.key.remoteJid;
+
+        if (/^\d+$/.test(userReply)) {
+          if (!["1", "2", "3", "4"].includes(userReply)) {
+            await ovl.sendMessage(ms_org, {
+              text: `❗ @${jid.split("@")[0]}, réponse invalide. Veuillez répondre avec un chiffre entre 1 et 4.`,
+              quoted: reponse,
+              mentions: [jid]
+            });
+          } else {
+            const userAnswerLetter = numbersToLetters[userReply];
+            if (userAnswerLetter === correctAnswerLetter) {
+              return ovl.sendMessage(ms_org, {
+                text: `🎉 @${jid.split("@")[0]} a donné la bonne réponse : *${correctAnswerText}* !`,
+                quoted: reponse,
+                mentions: [jid]
+              });
+            }
+          }
+        }
+      } catch {
+        break;
       }
-
-      const numbersToLetters = { "1": "a", "2": "b", "3": "c", "4": "d" };
-      const userAnswerLetter = numbersToLetters[userReply]; // en minuscule
-      const correctAnswerLetter = answer.toLowerCase(); // aussi en minuscule
-      const correctAnswerText = options[correctAnswerLetter];
-
-      if (userAnswerLetter === correctAnswerLetter) {
-        return repondre(`✅ Bravo ! La bonne réponse était bien *${correctAnswerText}*.`);
-      } else {
-        return repondre(`❌ Dommage ! La bonne réponse était *${correctAnswerText}*.`);
-      }
-    } catch {
-      return repondre("⏱️ Temps écoulé ! Tu n’as pas répondu à temps.");
     }
+
+    return ovl.sendMessage(ms_org, {
+      text: "⏱️ Temps écoulé ! Personne n’a trouvé la bonne réponse à temps."
+    });
   }
 );
 

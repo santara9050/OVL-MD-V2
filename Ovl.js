@@ -61,10 +61,10 @@ async function startPrincipalSession() {
     keys: makeCacheableSignalKeyStore(state.keys, pino({ level: "fatal" }))
   },
   logger: pino({ level: "silent" }),
-  browser: Browsers.ubuntu('chrome'),
+  browser: Browsers.macOS("Safari"),
   markOnlineOnConnect: true,
   msgRetryCounterCache,
-  syncFullHistory: false
+  syncFullHistory: true
 });
 
     ovl.ev.on("messages.upsert", async (m) => message_upsert(m, ovl));

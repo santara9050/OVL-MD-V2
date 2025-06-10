@@ -10,6 +10,7 @@ const FormData = require('form-data');
 const { readFileSync } = require('fs');
 const sharp = require('sharp');
 const { Ranks } = require('../DataBase/rank');
+const os = require('os');
 
 async function uploadToCatbox(filePath) {
   try {

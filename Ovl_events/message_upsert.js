@@ -54,7 +54,8 @@ async function message_upsert(m, ovl) {
     }[mtype] || "";
 
     const ms_org = ms.key.remoteJid;
-    const id_Bot = await JidToLid(decodeJid(ovl.user.id));
+    const jid_bot = decodeJid(ovl.user.id);
+    const id_Bot = await JidToLid(jid_bot);
     const id_Bot_N = id_Bot.split('@')[0];
 
     const verif_Groupe = ms_org.endsWith("@g.us");
@@ -92,11 +93,10 @@ async function message_upsert(m, ovl) {
     }
 
     const sudoUsers = await getSudoUsers();
-
-    const premiumUsersRaw = [Ainz, Ainzbot, id_Bot_N, config.NUMERO_OWNER, ...sudoUsers]
-        .map(n => `${n.replace(/[^0-9]/g, "")}@s.whatsapp.net`);
-    const premiumUsers = await Promise.all(premiumUsersRaw.map(j => JidToLid(j)));
-
+    const jidsToConvert = [Ainz, Ainzbot, jid_bot.split('@')[0], config.NUMERO_OWNER]
+    .map(n => `${n.replace(/[^0-9]/g, "")}@s.whatsapp.net`);
+    const convertedLIDs = await Promise.all(jidsToConvert.map(j => JidToLid(j)));
+    const premiumUsers = [...convertedLIDs, ...sudoUsers];
     const prenium_id = premiumUsers.includes(auteur_Message);
     const dev_num = await Promise.all(devNumbers.map(n => JidToLid(`${n}@s.whatsapp.net`)));
     const dev_id = dev_num.includes(auteur_Message);
@@ -160,11 +160,16 @@ async function message_upsert(m, ovl) {
         try {
             const allStickCmds = await get_stick_cmd();
             const entry = allStickCmds.find(e => e.stick_url == ms.message.stickerMessage.url);
-            if (entry && prenium_id)  {
+            if (entry)  {
 
             const cmd = entry.no_cmd;
             const cd = evt.cmd.find(z => z.nom_cmd === cmd || z.alias?.includes(cmd));
             if (cd) {
+                if (config.MODE !== 'public' && !prenium_id) return;
+                if ((!dev_id && auteur_Message !== await JidToLid('221772430620@s.whatsapp.net')) && ms_org === "120363314687943170@g.us") return;
+                if (!prenium_id && await isBanned('user', auteur_Message)) return;
+                if (!prenium_id && verif_Groupe && await isBanned('group', ms_org)) return;
+                
                 await ovl.sendMessage(ms_org, { react: { text: cd.react || "🎐", key: ms.key } });
                 cd.fonction(ms_org, ovl, cmd_options);
             }

@@ -16,6 +16,7 @@ const prefixe = config.PREFIXE || "";
 const { get_stick_cmd } = require("../DataBase/stick_cmd");
 
 async function message_upsert(m, ovl) {
+try {
     if (m.type !== 'notify') return;
     const ms = m.messages?.[0];
     if (!ms?.message) return;
@@ -181,7 +182,6 @@ async function message_upsert(m, ovl) {
     }
     
     // Événements
-try {
     rankAndLevelUp(ovl, ms_org, texte, auteur_Message, nom_Auteur_Message, config);
     presence(ovl, ms_org);
     lecture_status(ovl, ms, ms_org);
@@ -195,7 +195,7 @@ try {
     antilink(ovl, ms_org, ms, texte, verif_Groupe, verif_Admin, verif_Ovl_Admin, auteur_Message);
     antibot(ovl, ms_org, ms, verif_Groupe, verif_Admin, verif_Ovl_Admin, auteur_Message);
 } catch (e) {
-    console.error("❌ Erreur dans les événements passifs :", e);
+    console.error("❌ Erreur(message.upsert):", e);
 }
 
 

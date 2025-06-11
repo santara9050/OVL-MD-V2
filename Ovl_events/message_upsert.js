@@ -67,8 +67,8 @@ async function message_upsert(m, ovl) {
 
     const msg_Repondu = ms.message.extendedTextMessage?.contextInfo?.quotedMessage;
     const auteur_Msg_Repondu = await JidToLid(decodeJid(ms.message.extendedTextMessage?.contextInfo?.participant));
-    const mention = ms.message.extendedTextMessage?.contextInfo?.mentionedJid || [];
-    const mention_JID = await Promise.all(mention.map(jid => JidToLid(jid)));
+    const mentionnes = ms.message.extendedTextMessage?.contextInfo?.mentionedJid || [];
+    const mention_JID = await Promise.all(mentionnes.map(jid => JidToLid(jid)));
 
     const auteur_Message = verif_Groupe
         ? await JidToLid(ms.key.participant)

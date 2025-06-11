@@ -62,7 +62,6 @@ async function startPrincipalSession() {
   },
   logger: pino({ level: "silent" }),
   browser: Browsers.macOS("Safari"),
-  markOnlineOnConnect: false,
   msgRetryCounterCache,
   syncFullHistory: false
 });

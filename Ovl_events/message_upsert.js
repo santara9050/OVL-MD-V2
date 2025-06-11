@@ -62,12 +62,13 @@ async function message_upsert(m, ovl) {
     const infos_Groupe = verif_Groupe ? await ovl.groupMetadata(ms_org) : {};
     const nom_Groupe = infos_Groupe.subject || "";
     const mbre_membre = verif_Groupe ? infos_Groupe.participants : [];
-    const groupe_Admin = mbre_membre.filter((p) => p.admin).map((p) => p.id);
+    const groupe_Admin = await Promise.all(mbre_membre.filter((p) => p.admin).map(async (p) => await JidToLid(p.id)));
     const verif_Ovl_Admin = verif_Groupe && groupe_Admin.includes(id_Bot);
 
     const msg_Repondu = ms.message.extendedTextMessage?.contextInfo?.quotedMessage;
     const auteur_Msg_Repondu = await JidToLid(decodeJid(ms.message.extendedTextMessage?.contextInfo?.participant));
-    const mention_JID = ms.message.extendedTextMessage?.contextInfo?.mentionedJid;
+    const mention = ms.message.extendedTextMessage?.contextInfo?.mentionedJid || [];
+    const mention_JID = await Promise.all(mention.map(jid => JidToLid(jid)));
 
     const auteur_Message = verif_Groupe
         ? await JidToLid(ms.key.participant)

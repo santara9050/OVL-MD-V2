@@ -181,6 +181,7 @@ async function message_upsert(m, ovl) {
     }
     
     // Événements
+try {
     rankAndLevelUp(ovl, ms_org, texte, auteur_Message, nom_Auteur_Message, config);
     presence(ovl, ms_org);
     lecture_status(ovl, ms, ms_org);
@@ -193,6 +194,10 @@ async function message_upsert(m, ovl) {
     mention(ovl, ms_org, ms, mtype, verif_Groupe, id_Bot, repondre);
     antilink(ovl, ms_org, ms, texte, verif_Groupe, verif_Admin, verif_Ovl_Admin, auteur_Message);
     antibot(ovl, ms_org, ms, verif_Groupe, verif_Admin, verif_Ovl_Admin, auteur_Message);
+} catch (e) {
+    console.error("❌ Erreur dans les événements passifs :", e);
+}
+
 
 }
 

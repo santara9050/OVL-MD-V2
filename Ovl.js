@@ -55,7 +55,6 @@ async function startPrincipalSession() {
     const { version } = await fetchLatestBaileysVersion();
 
     const ovl = makeWASocket({
-  version,
   auth: {
     creds: state.creds,
     keys: makeCacheableSignalKeyStore(state.keys, pino({ level: "fatal" }))
@@ -65,7 +64,7 @@ async function startPrincipalSession() {
   msgRetryCounterCache,
   syncFullHistory: false
 });
-
+    
     ovl.ev.on("messages.upsert", async (m) => message_upsert(m, ovl));
     ovl.ev.on("group-participants.update", async (data) => group_participants_update(data, ovl));
 

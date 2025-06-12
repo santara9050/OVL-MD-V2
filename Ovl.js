@@ -60,11 +60,11 @@ async function startPrincipalSession() {
     keys: makeCacheableSignalKeyStore(state.keys, pino({ level: "fatal" }))
   },
   logger: pino({ level: "silent" }),
-  browser: Browsers.macOS("Safari"),
+  keepAliveIntervalMs: 10000,
+  browser: Browsers.macOS('Desktop'),
   msgRetryCounterCache,
   syncFullHistory: false
 });
-    
     ovl.ev.on("messages.upsert", async (m) => message_upsert(m, ovl));
     ovl.ev.on("group-participants.update", async (data) => group_participants_update(data, ovl));
 

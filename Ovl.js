@@ -55,13 +55,14 @@ async function startPrincipalSession() {
     const { version } = await fetchLatestBaileysVersion();
 
     const ovl = makeWASocket({
+  version,
   auth: {
     creds: state.creds,
     keys: makeCacheableSignalKeyStore(state.keys, pino({ level: "fatal" }))
   },
   logger: pino({ level: "silent" }),
   keepAliveIntervalMs: 10000,
-  browser: Browsers.macOS('Desktop'),
+  browser: Browsers.macOS("Safari"),
   msgRetryCounterCache,
   syncFullHistory: false
 });

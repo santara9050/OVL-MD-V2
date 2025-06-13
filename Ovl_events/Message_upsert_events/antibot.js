@@ -36,12 +36,12 @@ async function antibot(ovl, ms_org, ms, verif_Groupe, verif_Admin, verif_Ovl_Adm
                             break;
 
                         case 'warn':
-                            let warning = await Antibot_warnings.findOne({
+                            let warning = await AntibotWarnings.findOne({
                                 where: { groupId: ms_org, userId: auteur_Message }
                             });
 
                             if (!warning) {
-                                await Antibot_warnings.create({ groupId: ms_org, userId: auteur_Message });
+                                await AntibotWarnings.create({ groupId: ms_org, userId: auteur_Message });
                                 await ovl.sendMessage(ms_org, {
                                     text: `@${auteur_Message.split("@")[0]}, avertissement 1/3 pour utilisation de bot.`,
                                     mentions: [auteur_Message]

@@ -12,6 +12,7 @@ const {
   useMultiFileAuthState,
   delay
 } = require("@whiskeysockets/baileys");
+const { getMessage } = require('./lib/store');
 const config = require("./set");
 const {
   message_upsert,
@@ -64,7 +65,11 @@ async function startPrincipalSession() {
   keepAliveIntervalMs: 10000,
   browser: Browsers.macOS("Safari"),
   msgRetryCounterCache,
-  syncFullHistory: false
+  syncFullHistory: false,
+  getMessage: async (key) => {
+  const msg = getMessage(key.id);
+  return msg?.message || undefined;
+  }
 });
     ovl.ev.on("messages.upsert", async (m) => message_upsert(m, ovl));
     ovl.ev.on("group-participants.update", async (data) => group_participants_update(data, ovl));

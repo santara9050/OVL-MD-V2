@@ -74,42 +74,32 @@
   <summary>📝 Fichier index.js ou main.js pour déploiement sur panel</summary>
 
 ```js
-const { writeFileSync, existsSync, mkdirSync } = require('fs');
 const { spawnSync } = require('child_process');
-const path = require('path');
-
-const env_file = ``; // Ajoutez ici vos variables d'environnement
-
-if (!env_file.trim()) {
-  console.error("Aucune donnée de configuration dans 'env_file'. Remplissez les infos.");
-  process.exit(1);
-}
-
-const envPath = path.join(__dirname, 'ovl', '.env');
+const { existsSync } = require('fs');
 
 function runCommand(command, args, options = {}) {
   const result = spawnSync(command, args, { stdio: 'inherit', ...options });
-  if (result.error || result.status !== 0) {
-    throw new Error(`Erreur lors de l'exécution : ${command} ${args.join(' ')}`);
+  if (result.error) {
+    throw new Error(`Échec de l'exécution de ${command} ${args.join(' ')} : ${result.error.message}`);
   }
+  return result;
 }
 
-console.log("Installation de ffmpeg...");
+console.log('Installation de ffmpeg...');
 runCommand('apt-get', ['update']);
 runCommand('apt-get', ['install', '-y', 'ffmpeg']);
 
 if (!existsSync('ovl')) {
-  console.log("Clonage...");
+  console.log('Clonage du dépôt...');
   runCommand('git', ['clone', 'https://github.com/Ainz-devs/OVL-MD-V2', 'ovl']);
+
+  console.log('Installation des dépendances...');
   runCommand('npm', ['install'], { cwd: 'ovl' });
 }
 
-if (!existsSync(envPath)) {
-  mkdirSync(path.dirname(envPath), { recursive: true });
-  writeFileSync(envPath, env_file.trim());
-}
-
+console.log('Démarrage du bot...');
 runCommand('npm', ['run', 'Ovl'], { cwd: 'ovl' });
+console.log('Le bot est en cours d\'exécution...');
 ```
 
 </details>

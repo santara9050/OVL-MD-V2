@@ -468,7 +468,7 @@ ovlcmd(
     desc: "Supprimer un message.",
   },
   async (ms_org, ovl, cmd_options) => {
-    const { msg_Repondu, ms, auteur_Msg_Repondu, verif_Admin, verif_Ovl_Admin, verif_Groupe, dev_num, dev_id, repondre } = cmd_options;
+    const { msg_Repondu, ms, auteur_Msg_Repondu, verif_Admin, verif_Ovl_Admin, verif_Groupe, dev_num, dev_id, repondre, id_Bot, prenium_id } = cmd_options;
 
     if (!msg_Repondu) return repondre("Veuillez répondre à un message pour le supprimer.");
 
@@ -479,7 +479,7 @@ ovlcmd(
       if (!verif_Admin) return repondre("Vous devez être administrateur pour supprimer un message dans le groupe.");
       if (!verif_Ovl_Admin) return repondre("Je dois être administrateur pour effectuer cette action.");
     } else {
-      if (!is_premium) return repondre("Seuls les utilisateurs premium peuvent utiliser cette commande en privé.");
+      if (!prenium_id) return repondre("Seuls les utilisateurs premium peuvent utiliser cette commande en privé.");
     }
 
     try {

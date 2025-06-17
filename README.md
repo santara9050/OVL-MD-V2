@@ -74,30 +74,56 @@
   <summary>📝 Fichier index.js ou main.js pour déploiement sur panel</summary>
 
 ```js
+const { writeFileSync, existsSync, mkdirSync } = require('fs');
 const { spawnSync } = require('child_process');
-const { existsSync } = require('fs');
+const path = require('path');
+
+const env_file = ``; //Entrée votre fichier .env ici
+
+if (!env_file.trim()) {
+  console.error("Aucune donnée de configuration trouvée dans 'env_file'. Veuillez remplir vos informations dans le code.");
+  process.exit(1);
+}
+
+const envPath = path.join(__dirname, 'ovl', '.env');
 
 function runCommand(command, args, options = {}) {
   const result = spawnSync(command, args, { stdio: 'inherit', ...options });
   if (result.error) {
-    throw new Error(`Échec de l'exécution de ${command} ${args.join(' ')} : ${result.error.message}`);
+    throw new Error(`Échec de l'exécution de "${command} ${args.join(' ')}" : ${result.error.message}`);
   }
-  return result;
+  if (result.status !== 0) {
+    throw new Error(`Commande "${command} ${args.join(' ')}" retournée avec le code ${result.status}`);
+  }
 }
-
-console.log('Installation de ffmpeg...');
-runCommand('apt-get', ['update']);
-runCommand('apt-get', ['install', '-y', 'ffmpeg']);
 
 if (!existsSync('ovl')) {
-  console.log('Clonage du dépôt...');
+  console.log('Installation de ffmpeg...');
+  runCommand('apt-get', ['update']);
+  runCommand('apt-get', ['install', '-y', 'ffmpeg']);
+  console.log("Installation de ffmpeg✅, Clonage du bot en cours...");
   runCommand('git', ['clone', 'https://github.com/Ainz-devs/OVL-MD-V2', 'ovl']);
-
-  console.log('Installation des dépendances...');
+  console.log("Clonage terminé, installation des dépendances...");
   runCommand('npm', ['install'], { cwd: 'ovl' });
+  console.log("Dépendances installées avec succès !");
 }
 
-console.log('Démarrage du bot...');
+if (!existsSync(envPath)) {
+  try {
+    const envDir = path.dirname(envPath);
+    if (!existsSync(envDir)) {
+      mkdirSync(envDir, { recursive: true });
+      console.log(`Répertoire créé: ${envDir}`);
+    }
+    writeFileSync(envPath, env_file.trim());
+    console.log("Fichier .env créé avec succès !");
+  } catch (error) {
+    console.error(`Erreur lors de la création du fichier .env : ${error.message}`);
+    process.exit(1);
+  }
+}
+
+console.log("Démarrage du bot...");
 runCommand('npm', ['run', 'Ovl'], { cwd: 'ovl' });
 console.log('Le bot est en cours d\'exécution...');
 ```

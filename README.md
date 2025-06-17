@@ -98,10 +98,7 @@ function runCommand(command, args, options = {}) {
 }
 
 if (!existsSync('ovl')) {
-  console.log('Installation de ffmpeg...');
-  runCommand('apt-get', ['update']);
-  runCommand('apt-get', ['install', '-y', 'ffmpeg']);
-  console.log("Installation de ffmpeg✅, Clonage du bot en cours...");
+  console.log("Clonage du bot en cours...");
   runCommand('git', ['clone', 'https://github.com/Ainz-devs/OVL-MD-V2', 'ovl']);
   console.log("Clonage terminé, installation des dépendances...");
   runCommand('npm', ['install'], { cwd: 'ovl' });

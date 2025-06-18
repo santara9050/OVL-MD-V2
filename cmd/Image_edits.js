@@ -28,7 +28,7 @@ function genererCommandeCanvacord(nomCommande, effet) {
         let imageBuffer;
         const cible =
           auteur_Msg_Repondu ||
-          (arg[0]?.includes("@") && `${arg[0].replace("@", "")}@s.whatsapp.net`) || auteur_Message;
+          (arg[0]?.includes("@") && `${arg[0].replace("@", "")}@lid`) || auteur_Message;
 
         if (msg_Repondu?.imageMessage) {
           const cheminFichier = await ovl.dl_save_media_ms(msg_Repondu.imageMessage);
